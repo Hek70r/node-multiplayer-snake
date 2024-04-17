@@ -39,19 +39,23 @@
       }
 
     stage("Deploy") {
-        echo "Deploying..."
-
-        // Uruchomienie kontenera budującego aplikację
-        sh 'docker run --name snake_build -d -p 3000:3000 snake_build'
+            steps {
+                echo "Deploying..."
+                // Uruchomienie kontenera budującego aplikację
+                sh 'docker run --name snake_build -d -p 3000:3000 snake_build'
+        }
     }
 
       stage('Publish') {
           steps {
             echo "Publishing test results and logs..."
             // Zapisz logi z kontenera
-            sh 'docker logs snake_app > app_log.txt'
+            sh 'docker logs snake_build > snake_log.txt'
             // Archiwizuj logi i inne wyniki
-            archiveArtifacts artifacts: 'app_log.txt', fingerprint: true
+            archiveArtifacts artifacts: 'snake_log.txt', fingerprint: true
+          
+            sh 'docker stop snake_build'
+            sh 'docker rm snake_build'
           }
       }
   }

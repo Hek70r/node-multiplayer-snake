@@ -1,5 +1,13 @@
 #!/bin/bash
 
-# Zatrzymaj i usuń kontenery zaczynające się na "snake_"
-docker stop $(docker ps -aq --filter name="snake_*")
-docker rm $(docker ps -aq --filter name="snake_*")
+if [ "$(docker ps -a -q)" ]; then
+  docker stop -f $(docker ps -a -q)
+  docker rm -f $(docker ps -a -q)
+fi
+
+if [ "$(docker images -q)" ]; then
+  docker rmi -f $(docker images -q)
+fi
+
+docker ps -a
+docker images
